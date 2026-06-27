@@ -1,0 +1,29 @@
+{
+  "name": "rahasya-video-distribution",
+  "version": "1.0.0",
+  "description": "Rahasya Video Distribution Engine — publishes horoscope videos to social media platforms",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "distribute": "ts-node src/index.ts distribute",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.6.5",
+    "dotenv": "^16.4.1",
+    "form-data": "^4.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

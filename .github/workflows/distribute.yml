@@ -1,0 +1,114 @@
+# .github/workflows/distribute.yml
+# Rahasya Video Distribution Engine — Automatic Publishing
+# Runs three times per day, approximately 10 hours apart (UTC)
+
+name: Distribute Videos
+
+on:
+  schedule:
+    # 00:00 UTC  (run 1)
+    - cron: '0 0 * * *'
+    # 10:00 UTC  (run 2)
+    - cron: '0 10 * * *'
+    # 20:00 UTC  (run 3)
+    - cron: '0 20 * * *'
+
+  workflow_dispatch:
+    inputs:
+      run_mode:
+        description: 'Run mode override (TEST or PRODUCTION)'
+        required: false
+        default: 'PRODUCTION'
+        type: choice
+        options:
+          - PRODUCTION
+          - TEST
+
+jobs:
+  distribute:
+    name: Publish Videos to All Platforms
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Run Distribution Engine
+        env:
+          # Supabase
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+          # Platform limits
+          FACEBOOK_VIDEO_LIMIT: ${{ vars.FACEBOOK_VIDEO_LIMIT || '10' }}
+          INSTAGRAM_VIDEO_LIMIT: ${{ vars.INSTAGRAM_VIDEO_LIMIT || '10' }}
+          THREADS_VIDEO_LIMIT: ${{ vars.THREADS_VIDEO_LIMIT || '10' }}
+          PINTEREST_VIDEO_LIMIT: ${{ vars.PINTEREST_VIDEO_LIMIT || '10' }}
+          YOUTUBE_VIDEO_LIMIT: ${{ vars.YOUTUBE_VIDEO_LIMIT || '10' }}
+          TIKTOK_VIDEO_LIMIT: ${{ vars.TIKTOK_VIDEO_LIMIT || '0' }}
+
+          # Facebook
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+
+          # Instagram
+          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+
+          # Threads
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+
+          # Pinterest
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+          PINTEREST_BOARD_ID: ${{ secrets.PINTEREST_BOARD_ID }}
+
+          # YouTube
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+
+          # TikTok
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+
+          # Run mode
+          RUN_MODE: ${{ github.event.inputs.run_mode || 'PRODUCTION' }}
+
+        run: node dist/index.js distribute
+
+      - name: Upload distribution report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: distribution-report-${{ github.run_id }}
+          path: |
+            output/report.json
+            output/distribution.log
+            output/errors.log
+          retention-days: 30
+
+      - name: Display report summary
+        if: always()
+        run: |
+          if [ -f output/report.json ]; then
+            echo "=== Distribution Report ==="
+            cat output/report.json
+          else
+            echo "No report generated."
+          fi
