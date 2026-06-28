@@ -2,7 +2,6 @@
 import type { PinterestMetadata, VideoRecord } from '../types/index.js';
 import {
   capitalise,
-  formatDate,
   getMoodEmoji,
   getZodiacEmoji,
   ZODIAC_ELEMENTS,
