@@ -3,7 +3,6 @@ import type { FacebookMetadata, VideoRecord } from '../types/index.js';
 import {
   capitalise,
   FACEBOOK_CTAS,
-  formatDate,
   getMoodEmoji,
   getZodiacEmoji,
   pickDeterministic,
