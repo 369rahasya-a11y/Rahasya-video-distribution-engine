@@ -14,9 +14,8 @@ export function generatePinterestMetadata(record: VideoRecord): PinterestMetadat
   const emoji = getZodiacEmoji(content.sign);
   const moodEmoji = getMoodEmoji(content.mood);
   const element = ZODIAC_ELEMENTS[content.sign.toLowerCase()] ?? 'Cosmic';
-  const date = formatDate(content.horoscope_date);
 
-  const title = `${emoji} ${sign} Horoscope ${moodEmoji} — ${date}`;
+  const title = `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji}`;
 
   const description =
     `${content.reel_hook} ` +
