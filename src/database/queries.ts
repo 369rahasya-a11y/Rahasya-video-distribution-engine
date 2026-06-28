@@ -32,7 +32,7 @@ export async function fetchUnpublishedVideos(
   const supabase = getSupabaseClient();
 
   const { data, error } = await supabase
-    .from('video_assets')
+    .from('social_videos')
     .select(
       `
       id,
@@ -160,7 +160,7 @@ export async function markAsPublished(
   };
 
   const { error } = await supabase
-    .from('video_assets')
+    .from('social_videos')
     .update(updatePayload)
     .eq('id', videoId);
 
@@ -186,7 +186,7 @@ export async function setProcessingFlag(
   };
 
   const { error } = await supabase
-    .from('video_assets')
+    .from('social_videos')
     .update(updatePayload)
     .eq('id', videoId);
 
