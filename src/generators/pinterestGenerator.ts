@@ -18,10 +18,10 @@ export function generatePinterestMetadata(record: VideoRecord): PinterestMetadat
   const title = `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji}`;
 
   const description =
-    `${content.reel_hook} ` +
-    `${content.caption} ` +
-    `Discover what the stars have in store for ${sign} (${element} sign) today. ` +
-    `Save this pin for your daily cosmic guidance!`;
+  `${content.reel_hook} ` +
+  `${content.caption} ` +
+  `Discover what the stars have in store for ${sign} (${element} sign). ` +
+  `Save this pin for your cosmic guidance!`;
 
   const tags = [
     content.sign.toLowerCase(),
@@ -38,7 +38,7 @@ export function generatePinterestMetadata(record: VideoRecord): PinterestMetadat
     content.mood.toLowerCase(),
   ];
 
-  const altText = `${sign} horoscope for ${date} — ${content.reel_hook}`;
+  const altText = `${sign} ${capitalise(content.mood)} horoscope — ${content.reel_hook}`;
 
   return { title, description, tags, altText };
 }
