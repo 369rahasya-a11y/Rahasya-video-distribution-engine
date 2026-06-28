@@ -13,7 +13,6 @@ export function generateInstagramMetadata(record: VideoRecord): InstagramMetadat
   const sign = capitalise(content.sign);
   const emoji = getZodiacEmoji(content.sign);
   const moodEmoji = getMoodEmoji(content.mood);
-  const date = formatDate(content.horoscope_date);
 
   const hashtags = [
     `#${content.sign.toLowerCase()}`,
@@ -27,11 +26,12 @@ export function generateInstagramMetadata(record: VideoRecord): InstagramMetadat
   ];
 
   const caption =
-    `${emoji} ${sign} | ${date} ${moodEmoji}\n\n` +
-    `${content.reel_hook}\n\n` +
-    `${content.caption}\n\n` +
-    `💫 Save this for your daily check-in!\n` +
-    `👇 Drop a ✨ if this resonates!`;
+    const caption =
+  `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji}\n\n` +
+  `${content.reel_hook}\n\n` +
+  `${content.caption}\n\n` +
+  `💫 Save this for your daily check-in!\n` +
+  `👇 Drop a ✨ if this resonates!`;
 
   const fullCaption = `${caption}\n.\n.\n.\n${hashtags.join(' ')}`;
 
