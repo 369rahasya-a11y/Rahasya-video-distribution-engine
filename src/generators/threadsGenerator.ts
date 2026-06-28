@@ -2,7 +2,6 @@
 import type { ThreadsMetadata, VideoRecord } from '../types/index.js';
 import {
   capitalise,
-  formatDate,
   getMoodEmoji,
   getZodiacEmoji,
   PLATFORM_HASHTAGS,
