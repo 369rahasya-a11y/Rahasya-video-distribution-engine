@@ -15,7 +15,6 @@ export function generateFacebookMetadata(record: VideoRecord): FacebookMetadata 
   const sign = capitalise(content.sign);
   const emoji = getZodiacEmoji(content.sign);
   const moodEmoji = getMoodEmoji(content.mood);
-  const date = formatDate(content.horoscope_date);
   const cta = pickDeterministic(FACEBOOK_CTAS, asset.id);
 
   const hashtags = [
@@ -28,10 +27,11 @@ export function generateFacebookMetadata(record: VideoRecord): FacebookMetadata 
   ];
 
   const caption =
-    `${emoji} ${sign} Horoscope — ${date} ${moodEmoji}\n\n` +
-    `${content.reel_hook}\n\n` +
-    `${content.caption}`;
-
+    const caption =
+  const caption =
+  `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji}\n\n` +
+  `${content.reel_hook}\n\n` +
+  `${content.caption}`;
   const fullDescription =
     `${caption}\n\n` + `${cta}\n\n` + hashtags.join(' ');
 
