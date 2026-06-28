@@ -15,11 +15,10 @@ export function generateYouTubeMetadata(record: VideoRecord): YouTubeMetadata {
   const emoji = getZodiacEmoji(content.sign);
   const moodEmoji = getMoodEmoji(content.mood);
   const element = ZODIAC_ELEMENTS[content.sign.toLowerCase()] ?? 'Cosmic';
-  const date = formatDate(content.horoscope_date);
-
+  
   // YouTube Shorts titles are capped at 100 chars — keep it punchy
-  const title = `${emoji} ${sign} Horoscope ${moodEmoji} | ${date} #Shorts`;
-
+  const title = `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji} #Shorts`;
+  
   const description =
     `${content.reel_hook}\n\n` +
     `${content.caption}\n\n` +
