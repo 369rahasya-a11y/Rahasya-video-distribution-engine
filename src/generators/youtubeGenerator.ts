@@ -2,7 +2,6 @@
 import type { YouTubeMetadata, VideoRecord } from '../types/index.js';
 import {
   capitalise,
-  formatDate,
   getMoodEmoji,
   getZodiacEmoji,
   YOUTUBE_DESCRIPTIONS_SUFFIX,
@@ -26,22 +25,20 @@ export function generateYouTubeMetadata(record: VideoRecord): YouTubeMetadata {
     YOUTUBE_DESCRIPTIONS_SUFFIX;
 
   const tags = [
-    sign,
-    `${sign} horoscope`,
-    `${sign} zodiac`,
-    `${sign} ${date}`,
-    'horoscope',
-    'daily horoscope',
-    'zodiac',
-    'astrology',
-    'horoscope today',
-    element,
-    'cosmic energy',
-    'spirituality',
-    'YouTube Shorts',
-    'Shorts',
-    content.mood,
-  ];
+  sign,
+  `${sign} horoscope`,
+  `${sign} zodiac`,
+  `${sign} ${content.mood}`,
+  'horoscope',
+  'zodiac',
+  'astrology',
+  element,
+  'cosmic energy',
+  'spirituality',
+  'YouTube Shorts',
+  'Shorts',
+  content.mood,
+];
 
   return {
     title,
