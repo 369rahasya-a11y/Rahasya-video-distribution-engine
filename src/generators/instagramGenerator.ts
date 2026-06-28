@@ -26,7 +26,6 @@ export function generateInstagramMetadata(record: VideoRecord): InstagramMetadat
   ];
 
   const caption =
-    const caption =
   `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji}\n\n` +
   `${content.reel_hook}\n\n` +
   `${content.caption}\n\n` +
