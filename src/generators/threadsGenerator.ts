@@ -13,8 +13,7 @@ export function generateThreadsMetadata(record: VideoRecord): ThreadsMetadata {
   const sign = capitalise(content.sign);
   const emoji = getZodiacEmoji(content.sign);
   const moodEmoji = getMoodEmoji(content.mood);
-  const date = formatDate(content.horoscope_date);
-
+  
   // Threads favours concise, conversation-starting posts
   const hashtags = [
     `#${content.sign.toLowerCase()}`,
@@ -23,10 +22,10 @@ export function generateThreadsMetadata(record: VideoRecord): ThreadsMetadata {
   ];
 
   const shortPost =
-    `${emoji} ${sign} — ${date} ${moodEmoji}\n\n` +
-    `${content.reel_hook}\n\n` +
-    `${content.card_hook}\n\n` +
-    `What do you think? 👇`;
+  `${emoji} ${sign} • ${capitalise(content.mood)} ${moodEmoji}\n\n` +
+  `${content.reel_hook}\n\n` +
+  `${content.card_hook}\n\n` +
+  `What do you think? 👇`;
 
   const fullPost = `${shortPost}\n\n${hashtags.join(' ')}`;
 
