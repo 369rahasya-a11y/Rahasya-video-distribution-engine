@@ -54,15 +54,11 @@ export async function fetchUnpublishedVideos(
       processing,
       processing_started_at,
       marketing_content:marketing_content_id (
-        marketing_horoscope_id,
         sign,
         mood,
         reel_hook,
-        reel_script,
         caption,
-        card_hook,
-        horoscope_date,
-        created_at
+        card_hook
       )
     `,
     )
@@ -126,15 +122,11 @@ export async function fetchUnpublishedVideos(
         processing_started_at: row.processing_started_at as string | null,
       },
       content: {
-        marketing_horoscope_id: content.marketing_horoscope_id as string,
         sign: content.sign as string,
         mood: content.mood as string,
         reel_hook: content.reel_hook as string,
-        reel_script: content.reel_script as string,
         caption: content.caption as string,
         card_hook: content.card_hook as string,
-        horoscope_date: content.horoscope_date as string,
-        created_at: content.created_at as string,
       },
     });
   }
