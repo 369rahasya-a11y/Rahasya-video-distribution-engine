@@ -6,10 +6,10 @@ name: Distribute Videos
 
 on:
   schedule:
-    # 00:00 UTC  (run 1)
-    - cron: '0 0 * * *'
-    # 10:00 UTC  (run 2)
-    - cron: '0 10 * * *'
+    # 5:00 AM IST
+    - cron: '30 23 * * *'
+    # 5:00 PM IST  (run 2)
+    - cron: '30 11 * * *'
     # 20:00 UTC  (run 3)
     - cron: '0 20 * * *'
 
