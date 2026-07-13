@@ -5,15 +5,11 @@
 // ============================================================
 
 export interface MarketingContent {
-  marketing_horoscope_id: string;
   sign: string;
   mood: string;
   reel_hook: string;
-  reel_script: string;
   caption: string;
   card_hook: string;
-  horoscope_date: string;
-  created_at: string;
 }
 
 export interface VideoAsset {
