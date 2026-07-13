@@ -31,12 +31,20 @@ export class YouTubePublisher implements IPlatformPublisher<YouTubeMetadata> {
 
   async publish(record: VideoRecord, metadata: YouTubeMetadata): Promise<string> {
     const accessToken = await this.refreshAccessToken();
+
+    logger.info('[youtube] Access token refreshed successfully.');
+
     const videoUrl = record.asset.video_url;
 
     logger.info(`[youtube] Fetching video stream for ${record.asset.id}`);
 
-    const videoResponse = await axios.get(videoUrl, { responseType: 'stream' });
-    const contentLength = videoResponse.headers['content-length'] as string | undefined;
+    const videoResponse = await axios.get(videoUrl, {
+      responseType: 'stream',
+    });
+
+    const contentLength = videoResponse.headers['content-length'] as
+      | string
+      | undefined;
 
     const metadataBody = {
       snippet: {
@@ -52,44 +60,94 @@ export class YouTubePublisher implements IPlatformPublisher<YouTubeMetadata> {
     };
 
     logger.info(`[youtube] Starting resumable upload for "${metadata.title}"`);
-
-    // Initiate resumable upload session
-    const initRes = await axios.post(
-      'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
-      metadataBody,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-          'X-Upload-Content-Type': 'video/mp4',
-          ...(contentLength ? { 'X-Upload-Content-Length': contentLength } : {}),
-        },
-        timeout: 30_000,
-      },
+    logger.info(
+      `[youtube] Metadata:\n${JSON.stringify(metadataBody, null, 2)}`,
     );
 
-    const uploadUrl = initRes.headers['location'] as string;
-    if (!uploadUrl) throw new Error('[youtube] No upload URL in initiation response.');
+    let uploadUrl: string;
 
-    // Stream video bytes to the resumable upload URL
-    const uploadRes = await axios.put<YouTubeUploadResponse>(
-      uploadUrl,
-      videoResponse.data,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'video/mp4',
-          ...(contentLength ? { 'Content-Length': contentLength } : {}),
+    try {
+      const initRes = await axios.post(
+        'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
+        metadataBody,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Upload-Content-Type': 'video/mp4',
+            ...(contentLength
+              ? { 'X-Upload-Content-Length': contentLength }
+              : {}),
+          },
+          timeout: 30_000,
         },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-        timeout: 600_000,
-      },
-    );
+      );
 
-    const videoId = uploadRes.data.id;
-    logger.info(`[youtube] Published: video_id=${videoId}`);
-    return videoId;
+      uploadUrl = initRes.headers['location'] as string;
+
+      if (!uploadUrl) {
+        throw new Error('[youtube] No upload URL returned by YouTube.');
+      }
+
+      logger.info('[youtube] Resumable upload session created.');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        logger.error('==========================================');
+        logger.error('[youtube] Upload initiation failed');
+        logger.error(`Status: ${err.response?.status}`);
+        logger.error(`URL: ${err.config?.url}`);
+        logger.error(
+          `Response:\n${JSON.stringify(err.response?.data, null, 2)}`,
+        );
+        logger.error(
+          `Headers:\n${JSON.stringify(err.response?.headers, null, 2)}`,
+        );
+        logger.error('==========================================');
+      }
+
+      throw err;
+    }
+
+    try {
+      const uploadRes = await axios.put<YouTubeUploadResponse>(
+        uploadUrl,
+        videoResponse.data,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'video/mp4',
+            ...(contentLength
+              ? { 'Content-Length': contentLength }
+              : {}),
+          },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+          timeout: 600_000,
+        },
+      );
+
+      const videoId = uploadRes.data.id;
+
+      logger.info(`[youtube] Published successfully: ${videoId}`);
+
+      return videoId;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        logger.error('==========================================');
+        logger.error('[youtube] Video upload failed');
+        logger.error(`Status: ${err.response?.status}`);
+        logger.error(`URL: ${err.config?.url}`);
+        logger.error(
+          `Response:\n${JSON.stringify(err.response?.data, null, 2)}`,
+        );
+        logger.error(
+          `Headers:\n${JSON.stringify(err.response?.headers, null, 2)}`,
+        );
+        logger.error('==========================================');
+      }
+
+      throw err;
+    }
   }
 
   async updateDatabase(videoId: string): Promise<void> {
