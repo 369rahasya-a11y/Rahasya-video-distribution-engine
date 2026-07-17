@@ -6,13 +6,8 @@ name: Distribute Videos
 
 on:
   schedule:
-    # 5:00 AM IST
-    - cron: '30 23 * * *'
-    # 5:00 PM IST  (run 2)
-    - cron: '30 11 * * *'
-    # 20:00 UTC  (run 3)
-    - cron: '0 20 * * *'
-
+   - cron: '0 * * * *'
+   
   workflow_dispatch:
     inputs:
       run_mode:
